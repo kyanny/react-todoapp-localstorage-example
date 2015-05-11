@@ -1,14 +1,15 @@
 var TodoList = React.createClass({
   getInitialState: function() {
     return {
-      items: this.props.items || []
+      items: JSON.parse(localStorage.getItem('items')) || this.props.items || []
     };
   },
 
   addItem: function(value) {
     var items = this.state.items;
     items.push(value);
-    this.setState({iitems: items});
+    this.setState({items: items});
+    localStorage.setItem('items', JSON.stringify(items));
   },
 
   onDone: function(value) {
@@ -17,12 +18,17 @@ var TodoList = React.createClass({
       var index = items.indexOf(value);
       items.splice(index, 1);
       this.setState({items: items});
+      localStorage.setItem('items', JSON.stringify(items));
     }.bind(this), 400);
+  },
+
+  newKey: function() {
+    return Date.now() + Math.random();
   },
 
   renderItems: function() {
     return this.state.items.map(function(value) {
-      return <TodoItem value={value} onDone={this.onDone} />
+      return <TodoItem value={value} onDone={this.onDone} key={this.newKey()} />
     }.bind(this));
   },
 
